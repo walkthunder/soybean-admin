@@ -38,6 +38,7 @@ import type { DataTableColumns, PaginationProps } from 'naive-ui';
 import { genderLabels, userStatusLabels } from '@/constants';
 import { fetchUserList } from '@/service';
 import { useBoolean, useLoading } from '@/hooks';
+import { localStg } from '@/utils';
 import TableActionModal from './components/table-action-modal.vue';
 import type { ModalType } from './components/table-action-modal.vue';
 import ColumnSetting from './components/column-setting.vue';
@@ -51,11 +52,15 @@ function setTableData(data: UserManagement.User[]) {
 }
 
 async function getTableData() {
+  const token = localStg.get('token');
+  if (!token) {
+    return;
+  }
   startLoading();
-  const { data } = await fetchUserList();
+  const data = await fetchUserList(token);
   if (data) {
     setTimeout(() => {
-      setTableData(data);
+      setTableData(data as any);
       endLoading();
     }, 1000);
   }

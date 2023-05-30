@@ -1,8 +1,8 @@
+/* eslint-disable no-warning-comments */
 import axios from 'axios';
 import type { AxiosResponse, AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { REFRESH_TOKEN_CODE } from '@/config';
 import {
-  localStg,
   handleAxiosError,
   handleBackendError,
   handleResponseError,
@@ -49,7 +49,7 @@ export default class CustomAxiosInstance {
           const contentType = handleConfig.headers['Content-Type'] as UnionKey.ContentType;
           handleConfig.data = await transformRequestData(handleConfig.data, contentType);
           // 设置token
-          handleConfig.headers.Authorization = localStg.get('token') || '';
+          // handleConfig.headers.Authorization = localStg.get('token') || '';
         }
         return handleConfig;
       },
@@ -63,13 +63,17 @@ export default class CustomAxiosInstance {
         const { status } = response;
         if (status === 200 || status < 300 || status === 304) {
           const backend = response.data;
-          const { codeKey, dataKey, successCode } = this.backendConfig;
+          const { codeKey } = this.backendConfig;
           // 请求成功
-          if (backend[codeKey] === successCode) {
-            return handleServiceResult(null, backend[dataKey]);
+          // if (backend[codeKey] === successCode) {
+          //   return handleServiceResult(null, backend[dataKey]);
+          // }
+          if (!backend.error) {
+            return handleServiceResult(null, backend);
           }
 
           // token失效, 刷新token
+          // TODO: 配置token失效的错误吗
           if (REFRESH_TOKEN_CODE.includes(backend[codeKey])) {
             const config = await handleRefreshToken(response.config);
             if (config) {
@@ -83,7 +87,15 @@ export default class CustomAxiosInstance {
         const error = handleResponseError(response);
         return handleServiceResult(error, null);
       }) as (response: AxiosResponse<any, any>) => Promise<AxiosResponse<any, any>>,
-      (axiosError: AxiosError) => {
+      async (axiosError: AxiosError) => {
+        console.error('request error: ', axiosError);
+        if (axiosError?.response?.status === 401) {
+          const config = axiosError?.response?.config;
+          const authedConfig = await handleRefreshToken(config);
+          if (authedConfig) {
+            return this.instance.request(authedConfig);
+          }
+        }
         const error = handleAxiosError(axiosError);
         return handleServiceResult(error, null);
       }

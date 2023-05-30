@@ -93,13 +93,18 @@ export const useAuthStore = defineStore('auth-store', {
       localStg.set('refreshToken', refreshToken);
 
       // 获取用户信息
-      const { data } = await fetchUserInfo();
+      const { data } = await fetchUserInfo(token);
       if (data) {
+        const userInfo = {
+          userId: (data as any).id,
+          userName: (data as any).name,
+          userRole: 'Super' as Auth.RoleType
+        };
         // 成功后把用户信息存储到缓存中
-        localStg.set('userInfo', data);
+        localStg.set('userInfo', userInfo);
 
         // 更新状态
-        this.userInfo = data;
+        this.userInfo = userInfo;
         this.token = token;
 
         successFlag = true;
@@ -116,6 +121,7 @@ export const useAuthStore = defineStore('auth-store', {
       this.loginLoading = true;
       const { data } = await fetchLogin(userName, password);
       if (data) {
+        console.log('data - ', data);
         await this.handleActionAfterLogin(data);
       }
       this.loginLoading = false;

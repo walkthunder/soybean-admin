@@ -1,4 +1,4 @@
-import { mockRequest } from '../request';
+import { mockRequest, request } from '../request';
 
 /**
  * 获取验证码
@@ -15,11 +15,27 @@ export function fetchSmsCode(phone: string) {
  * @param password - 密码
  */
 export function fetchLogin(userName: string, password: string) {
-  return mockRequest.post<ApiAuth.Token>('/login', { userName, password });
+  return request.post('/api/admin/auth/logInApi', { username: userName, password }).then(resp => {
+    const { data } = resp;
+    return {
+      data: {
+        token: (data as any)?.at,
+        refreshToken: (data as any)?.rt
+      }
+    };
+  });
 }
 
 /** 获取用户信息 */
-export function fetchUserInfo() {
+export async function fetchUserInfo(at?: string) {
+  const resp = await request.get('/api/admin/auth/info', {
+    headers: {
+      Authorization: `Bearer ${at}`
+    }
+  });
+  console.log('user info: ', resp);
+  return resp;
+
   return mockRequest.get<ApiAuth.UserInfo>('/getUserInfo');
 }
 
@@ -36,6 +52,13 @@ export function fetchUserRoutes(userId: string) {
  * 刷新token
  * @param refreshToken
  */
-export function fetchUpdateToken(refreshToken: string) {
-  return mockRequest.post<ApiAuth.Token>('/updateToken', { refreshToken });
+export async function fetchUpdateToken(refreshToken: string) {
+  // return mockRequest.post<ApiAuth.Token>('/updateToken', { refreshToken });
+  const resp = await request.get('/api/admin/auth/refreshToken', {
+    headers: {
+      Refresh: `Bearer ${refreshToken}`
+    }
+  });
+  console.log('refresh user token with resp info: ', resp);
+  return resp;
 }

@@ -1,22 +1,27 @@
 <template>
   <n-grid :x-gap="16" :y-gap="16" :item-responsive="true">
-    <n-grid-item span="0:24 640:24 1024:6">
-      <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <div class="w-full h-360px py-12px">
-          <h3 class="text-16px font-bold">Dashboard</h3>
-          <p class="text-#aaa">Overview Of Lasted Month</p>
-          <h3 class="pt-32px text-24px font-bold">
-            <count-to prefix="$" :start-value="0" :end-value="7754" />
-          </h3>
-          <p class="text-#aaa">Current Month Earnings</p>
-          <h3 class="pt-32px text-24px font-bold">
-            <count-to :start-value="0" :end-value="1234" />
-          </h3>
-          <p class="text-#aaa">Current Month Sales</p>
-          <n-button class="mt-24px whitespace-pre-wrap" type="primary">Last Month Summary</n-button>
-        </div>
-      </n-card>
-    </n-grid-item>
+    <template v-for="item in apps" :key="item.id">
+      <n-grid-item span="0:24 640:24 1024:6">
+        <n-card :bordered="false" class="rounded-16px shadow-sm">
+          <div class="w-full h-360px py-12px">
+            <h3 class="text-16px font-bold">Dashboard</h3>
+            <p class="text-#aaa">App信息</p>
+            <h3 class="pt-32px text-24px font-bold">
+              <!-- <count-to prefix="$" :start-value="0" :end-value="7754" /> -->
+              {{ item.displayName }}
+            </h3>
+            <p class="text-#aaa">应用名称</p>
+            <h3 class="pt-32px text-24px font-bold">
+              <!-- <count-to :start-value="0" :end-value="1234" /> -->
+              {{ item.description }}
+            </h3>
+            <p class="text-#aaa">应用描述</p>
+            <n-button class="mt-24px whitespace-pre-wrap" type="primary">详细信息(TBD)</n-button>
+          </div>
+        </n-card>
+      </n-grid-item>
+    </template>
+
     <n-grid-item span="0:24 640:24 1024:10">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div ref="lineRef" class="w-full h-360px"></div>
@@ -31,8 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import type { Ref } from 'vue';
+import { useDashStore } from '@/store';
 import { type ECOption, useEcharts } from '@/composables';
 
 defineOptions({ name: 'DashboardAnalysisTopCard' });
@@ -179,6 +185,21 @@ const pieOptions = ref<ECOption>({
   ]
 }) as Ref<ECOption>;
 const { domRef: pieRef } = useEcharts(pieOptions);
+
+const apps: any = [];
+const AppNames: string[] = [];
+
+onMounted(async () => {
+  // do something with the element
+  const store = useDashStore();
+  const list = await store.getAppList();
+  console.log('dash app list: ', list);
+  apps.push(...list);
+
+  apps.forEach((element: any) => {
+    AppNames.push(element.displayName);
+  });
+});
 </script>
 
 <style scoped></style>

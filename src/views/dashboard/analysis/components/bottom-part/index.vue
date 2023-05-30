@@ -1,136 +1,192 @@
 <template>
   <n-grid :x-gap="16" :y-gap="16" :item-responsive="true">
-    <n-grid-item span="0:24 640:24 1024:8">
+    <!-- <n-grid-item span="0:24 640:24 1024:8">
       <n-card title="时间线" :bordered="false" class="h-full rounded-16px shadow-sm">
         <n-timeline>
           <n-timeline-item v-for="item in timelines" :key="item.type" v-bind="item" />
         </n-timeline>
       </n-card>
-    </n-grid-item>
-    <n-grid-item span="0:24 640:24 1024:16">
+    </n-grid-item> -->
+    <n-grid-item v-my-directive span="0:24 640:24 1024:24">
       <n-card title="表格" :bordered="false" class="h-full rounded-16px shadow-sm">
-        <n-data-table size="small" :columns="columns" :data="tableData" />
+        <n-data-table size="small" :columns="columns" :data="userData" />
+      </n-card>
+    </n-grid-item>
+    <n-grid-item v-my-directive span="0:24 640:24 1024:24">
+      <n-card title="表格" :bordered="false" class="h-full rounded-16px shadow-sm">
+        <n-data-table size="small" :columns="orderColumns" :data="orderData" />
       </n-card>
     </n-grid-item>
   </n-grid>
 </template>
 
 <script setup lang="ts">
-import { h } from 'vue';
+import { onMounted, h, ref } from 'vue';
 import { NTag } from 'naive-ui';
+import { useDashStore } from '@/store';
 
 defineOptions({ name: 'DashboardAnalysisBottomPart' });
 
-interface TimelineData {
-  type: 'default' | 'info' | 'success' | 'warning' | 'error';
-  title: string;
-  content: string;
-  time: string;
-}
-
 interface TableData {
-  key: number;
+  // key: number;
+  // name: string;
+  // age: number;
+  // address: string;
+  // tags: string[];
+
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  appId: string;
   name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  email: string;
 }
 
-const timelines: TimelineData[] = [
-  { type: 'default', title: '啊', content: '', time: '2021-10-10 20:46' },
-  { type: 'success', title: '成功', content: '哪里成功', time: '2021-10-10 20:46' },
-  { type: 'error', title: '错误', content: '哪里错误', time: '2021-10-10 20:46' },
-  { type: 'warning', title: '警告', content: '哪里警告', time: '2021-10-10 20:46' },
-  { type: 'info', title: '信息', content: '是的', time: '2021-10-10 20:46' }
-];
+const userData = ref([] as any);
 
 const columns = [
+  {
+    title: 'id',
+    key: 'id'
+  },
+  {
+    title: 'AppId',
+    key: 'appId'
+  },
   {
     title: 'Name',
     key: 'name'
   },
   {
-    title: 'Age',
-    key: 'age'
+    title: 'Email',
+    key: 'email'
   },
   {
-    title: 'Address',
-    key: 'address'
-  },
-  {
-    title: 'Tags',
-    key: 'tags',
+    title: 'Created',
+    key: 'createdAt',
     render(row: TableData) {
-      const tags = row.tags.map(tagKey => {
-        return h(
-          NTag,
-          {
-            style: {
-              marginRight: '6px'
-            },
-            type: 'info'
+      return h(
+        NTag,
+        {
+          style: {
+            marginRight: '6px'
           },
-          {
-            default: () => tagKey
-          }
-        );
-      });
-      return tags;
+          type: 'info'
+        },
+        {
+          default: () => new Date(row.createdAt).toLocaleString()
+        }
+      );
+    }
+  },
+  {
+    title: 'Updated',
+    key: 'updatedAt',
+    render(row: TableData) {
+      return h(
+        NTag,
+        {
+          style: {
+            marginRight: '6px'
+          },
+          type: 'info'
+        },
+        {
+          default: () => new Date(row.updatedAt).toLocaleString()
+        }
+      );
     }
   }
 ];
 
-const tableData: TableData[] = [
+const orderData = ref([] as any);
+
+const orderColumns = [
   {
-    key: 0,
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer']
+    title: 'id',
+    key: 'id'
   },
   {
-    key: 1,
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['wow']
+    title: 'Serial',
+    key: 'serial'
   },
   {
-    key: 2,
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher']
+    title: 'Status',
+    key: 'status'
   },
   {
-    key: 3,
-    name: 'Soybean',
-    age: 25,
-    address: 'China Shenzhen',
-    tags: ['handsome', 'programmer']
+    title: 'CustomerId',
+    key: 'customerId'
   },
   {
-    key: 4,
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer']
+    title: 'CustomerName',
+    key: 'customer',
+    render(row: any) {
+      return h(
+        NTag,
+        {
+          style: {
+            marginRight: '6px'
+          },
+          type: 'info'
+        },
+        {
+          default: () => row.customer.name
+        }
+      );
+    }
   },
   {
-    key: 5,
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['wow']
+    title: 'Created',
+    key: 'createdAt',
+    render(row: TableData) {
+      return h(
+        NTag,
+        {
+          style: {
+            marginRight: '6px'
+          },
+          type: 'info'
+        },
+        {
+          default: () => new Date(row.createdAt).toLocaleString()
+        }
+      );
+    }
   },
   {
-    key: 6,
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher']
+    title: 'Updated',
+    key: 'updatedAt',
+    render(row: TableData) {
+      return h(
+        NTag,
+        {
+          style: {
+            marginRight: '6px'
+          },
+          type: 'info'
+        },
+        {
+          default: () => new Date(row.updatedAt).toLocaleString()
+        }
+      );
+    }
   }
 ];
+
+onMounted(async () => {
+  // do something with the element
+  const store = useDashStore();
+  const list = await store.getAppList();
+  console.log('app list: ', list);
+  const userList = await store.getUserList();
+  userData.value.push(...userList);
+  console.log('user data: ', userData);
+
+  const orderList: any[] = await store.getOrderList();
+  orderData.value.push(...(orderList || []));
+  console.log('order data: ', orderData);
+});
 </script>
 
 <style scoped></style>
