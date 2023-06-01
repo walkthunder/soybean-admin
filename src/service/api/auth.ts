@@ -10,6 +10,24 @@ export function fetchSmsCode(phone: string) {
 }
 
 /**
+ * 获取验证码
+ * @param token - 租户的access token
+ * @param email
+ * @returns - 返回boolean值表示是否发送成功
+ */
+export function fetchEmailCode(email: string) {
+  return request
+    .post('/api/admin/auth/preSignup', {
+      email
+    })
+    .then(resp => {
+      const { data } = resp;
+      if (!(data as any)?.verifyCode) return null;
+      return resp;
+    });
+}
+
+/**
  * 登录
  * @param userName - 用户名
  * @param password - 密码
@@ -24,6 +42,20 @@ export function fetchLogin(userName: string, password: string) {
         refreshToken: (data as any)?.rt
       }
     };
+  });
+}
+
+/**
+ * 登录
+ * @param userName - 用户名
+ * @param password - 密码
+ */
+// eslint-disable-next-line max-params
+export function fetchSingup(code: string, email: string, password: string, name?: string) {
+  return request.post('/api/admin/auth/signup', { verifyCode: code, name, email, password }).then(resp => {
+    const { data } = resp;
+    if (!(data as any)?.id) return null;
+    return resp;
   });
 }
 

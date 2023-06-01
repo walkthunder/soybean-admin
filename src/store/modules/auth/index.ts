@@ -1,7 +1,7 @@
 import { unref, nextTick } from 'vue';
 import { defineStore } from 'pinia';
 import { router } from '@/router';
-import { fetchLogin, fetchUserInfo } from '@/service';
+import { fetchLogin, fetchSingup, fetchUserInfo } from '@/service';
 import { useRouterPush } from '@/composables';
 import { localStg } from '@/utils';
 import { useTabStore } from '../tab';
@@ -126,6 +126,24 @@ export const useAuthStore = defineStore('auth-store', {
       }
       this.loginLoading = false;
     },
+
+    /**
+     * signup
+     * @param userName - 用户名
+     * @param password - 密码
+     */
+    // eslint-disable-next-line max-params
+    async signup(verifyCode: string, email: string, password: string, name?: string) {
+      this.loginLoading = true;
+      const { data } = (await fetchSingup(verifyCode, email, password, name)) || {};
+      if (data) {
+        console.log('signup data - ', data);
+        // await this.handleActionAfterLogin(data);
+      }
+      this.loginLoading = false;
+      return data;
+    },
+
     /**
      * 更换用户权限(切换账号)
      * @param userRole

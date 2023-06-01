@@ -1,7 +1,7 @@
 <template>
   <n-form ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
-    <n-form-item path="phone">
-      <n-input v-model:value="model.phone" placeholder="手机号码" />
+    <n-form-item path="text">
+      <n-input v-model:value="model.email" placeholder="邮箱" />
     </n-form-item>
     <n-form-item path="code">
       <div class="flex-y-center w-full">
@@ -29,24 +29,25 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue';
 import type { FormInst, FormRules } from 'naive-ui';
+import { useAuthStore } from '@/store';
 import { useRouterPush } from '@/composables';
-import { useSmsCode } from '@/hooks';
+import { useEmailCode } from '@/hooks';
 import { formRules, getConfirmPwdRule } from '@/utils';
 
 const { toLoginModule } = useRouterPush();
-const { label, isCounting, loading: smsLoading, start } = useSmsCode();
-
+const { label, isCounting, loading: smsLoading, start, getEmailCode } = useEmailCode();
+const { signup } = useAuthStore();
 const formRef = ref<HTMLElement & FormInst>();
 
 const model = reactive({
-  phone: '',
+  email: '',
   code: '',
   pwd: '',
   confirmPwd: ''
 });
 
 const rules: FormRules = {
-  phone: formRules.phone,
+  email: formRules.email,
   code: formRules.code,
   pwd: formRules.pwd,
   confirmPwd: getConfirmPwdRule(toRefs(model).pwd)
@@ -54,13 +55,23 @@ const rules: FormRules = {
 
 const agreement = ref(false);
 
-function handleSmsCode() {
+async function handleSmsCode() {
   start();
+  const code = await getEmailCode(model.email);
+  console.log('got code: ', code);
+  toRefs(model).code.value = code || '';
 }
 
 async function handleSubmit() {
   await formRef.value?.validate();
-  window.$message?.success('验证成功!');
+  const resp = await signup(model.code, model.email, model.pwd);
+  if (resp) {
+    console.log('sign up resp: ', resp);
+    window.$message?.success('验证成功!');
+    setTimeout(() => {
+      toLoginModule('pwd-login');
+    }, 500);
+  }
 }
 </script>
 
