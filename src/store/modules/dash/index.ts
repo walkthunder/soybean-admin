@@ -25,21 +25,22 @@ export const useDashStore = defineStore('dash-store', {
       return list as any[];
     },
 
-    async getUserList() {
+    async getUserList(query?: any) {
       const token = localStg.get('token');
       if (!token) {
         return [];
       }
-      const list = await fetchUserList(token);
+      console.log('get user list with query: ', query);
+      const list = await fetchUserList(token, query);
       console.log('list: ', list);
       return list as any[];
     },
-    async getOrderList() {
+    async getOrderList(query?: any) {
       const token = localStg.get('token');
       if (!token) {
         return [];
       }
-      const list = await fetchOrderList(token);
+      const list = await fetchOrderList(token, query);
       console.log('order list: ', list);
       return list as any[];
     }
