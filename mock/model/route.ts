@@ -17,6 +17,17 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
           }
         },
         {
+          name: 'dashboard_admin',
+          path: '/dashboard/admin',
+          component: 'self',
+          meta: {
+            title: '超管页',
+            requiresAuth: true,
+            icon: 'icon-park-outline:admin',
+            i18nTitle: 'message.routes.dashboard.admin'
+          }
+        },
+        {
           name: 'dashboard_workbench',
           path: '/dashboard/workbench',
           component: 'self',

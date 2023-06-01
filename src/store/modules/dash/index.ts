@@ -19,8 +19,22 @@ export const useDashStore = defineStore('dash-store', {
     // }
   },
   actions: {
-    async getAppList() {
-      const list = await fetchAppList();
+    async getAppList(query?: { isAdmin: boolean }) {
+      const token = localStg.get('token');
+      if (!token) {
+        return [];
+      }
+      if (query?.isAdmin) {
+        const userInfo = localStg.get('userInfo');
+        if (userInfo?.userRole === 'super') {
+          const list = await fetchAppList(token, true);
+          console.log('list: ', list);
+          return list as any[];
+        }
+        // Throw 401
+        return [];
+      }
+      const list = await fetchAppList(token);
       console.log('list: ', list);
       return list as any[];
     },

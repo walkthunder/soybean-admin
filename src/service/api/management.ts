@@ -6,6 +6,8 @@ import { request } from '../request';
 //   return adapter(adapterOfFetchUserList, data);
 // };
 export const fetchUserList = async (token: string, query?: any) => {
+  const isAdmin = query?.isAdmin;
+
   const q = new URLSearchParams();
   if (query?.start) {
     q.set('start', query?.start);
@@ -28,16 +30,21 @@ export const fetchUserList = async (token: string, query?: any) => {
   if (query?.email) {
     q.set('email', query?.email);
   }
-  const resp = await request.get(`/api/admin/apps/customers?${q.toString()}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
+  const resp = await request.get(
+    isAdmin ? `/api/admin/apps/super/customers?${q.toString()}` : `/api/admin/apps/customers?${q.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     }
-  });
+  );
   console.log('user info: ', resp);
   return resp.data;
 };
 
 export const fetchOrderList = async (token: string, query?: any) => {
+  const isAdmin = query?.isAdmin;
+
   const q = new URLSearchParams();
   if (query?.start) {
     q.set('start', query?.start);
@@ -60,16 +67,23 @@ export const fetchOrderList = async (token: string, query?: any) => {
   if (query?.customerId) {
     q.set('customerId', query?.customerId);
   }
-  const resp = await request.get(`/api/admin/apps/orders?${q.toString()}`, {
+  const resp = await request.get(
+    isAdmin ? `/api/admin/apps/super/orders?${q.toString()}` : `/api/admin/apps/orders?${q.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  console.log('order info: ', resp);
+  return resp.data;
+};
+export const fetchAppList = async (token: string, isAdmin?: boolean) => {
+  const resp = await request.get(isAdmin ? '/api/admin/apps/super/apps' : '/api/admin/apps', {
     headers: {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('order info: ', resp);
-  return resp.data;
-};
-export const fetchAppList = async () => {
-  const resp = await request.get('/api/admin/apps', {});
   console.log('app info: ', resp);
   return resp.data;
 };

@@ -312,6 +312,7 @@ declare namespace I18nType {
       dashboard: {
         _value: string;
         analysis: string;
+        admin: string;
         workbench: string;
       };
       document: {

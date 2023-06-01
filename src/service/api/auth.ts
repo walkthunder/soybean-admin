@@ -17,6 +17,7 @@ export function fetchSmsCode(phone: string) {
 export function fetchLogin(userName: string, password: string) {
   return request.post('/api/admin/auth/logInApi', { username: userName, password }).then(resp => {
     const { data } = resp;
+    if (!(data as any)?.at) return null;
     return {
       data: {
         token: (data as any)?.at,

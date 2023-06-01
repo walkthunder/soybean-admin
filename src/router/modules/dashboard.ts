@@ -24,14 +24,21 @@ const dashboard: AuthRoute.Route = {
         icon: 'icon-park-outline:workbench',
         i18nTitle: 'message.routes.dashboard.workbench'
       }
+    },
+    {
+      name: 'dashboard_admin',
+      path: '/dashboard/admin',
+      component: 'self',
+      meta: {
+        permissions: ['super'],
+        title: '超管页',
+        icon: 'mdi:menu',
+        requiresAuth: true,
+        i18nTitle: 'message.routes.dashboard.admin'
+      }
     }
   ],
-  meta: {
-    title: '仪表盘',
-    icon: 'mdi:monitor-dashboard',
-    order: 1,
-    i18nTitle: 'message.routes.dashboard._value'
-  }
+  meta: { title: '仪表盘', icon: 'mdi:monitor-dashboard', order: 1, i18nTitle: 'message.routes.dashboard._value' }
 };
 
 export default dashboard;

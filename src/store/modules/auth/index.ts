@@ -98,7 +98,7 @@ export const useAuthStore = defineStore('auth-store', {
         const userInfo = {
           userId: (data as any).id,
           userName: (data as any).name,
-          userRole: 'Super' as Auth.RoleType
+          userRole: ((data as any)?.role === 'superadmin' ? 'super' : 'user') as Auth.RoleType
         };
         // 成功后把用户信息存储到缓存中
         localStg.set('userInfo', userInfo);
@@ -119,7 +119,7 @@ export const useAuthStore = defineStore('auth-store', {
      */
     async login(userName: string, password: string) {
       this.loginLoading = true;
-      const { data } = await fetchLogin(userName, password);
+      const { data } = (await fetchLogin(userName, password)) || {};
       if (data) {
         console.log('data - ', data);
         await this.handleActionAfterLogin(data);
@@ -148,7 +148,7 @@ export const useAuthStore = defineStore('auth-store', {
         }
       };
       const { userName, password } = accounts[userRole];
-      const { data } = await fetchLogin(userName, password);
+      const { data } = (await fetchLogin(userName, password)) || {};
       if (data) {
         await this.loginByToken(data);
         resetRouteStore();

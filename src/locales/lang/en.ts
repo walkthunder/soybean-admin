@@ -9,6 +9,7 @@ const locale: LocaleMessages<I18nType.Schema> = {
       dashboard: {
         _value: 'Dashboard',
         analysis: 'Analysis',
+        admin: 'Admin',
         workbench: 'Workbench'
       },
       document: {
