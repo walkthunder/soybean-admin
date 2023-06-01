@@ -1,5 +1,11 @@
 <template>
   <n-grid :x-gap="16" :y-gap="16" :item-responsive="true">
+    <n-grid-item span="0:24 640:24 1024:24">
+      <n-space justify="space-around" size="large">
+        <n-button class="mt-24px my-3 whitespace-pre-wrap" type="primary" @click="handleCreate">新建应用</n-button>
+      </n-space>
+      <n-divider>账户详情</n-divider>
+    </n-grid-item>
     <template v-for="item in appsRef" :key="item.id">
       <n-grid-item span="0:24 640:24 1024:6">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
@@ -17,22 +23,14 @@
               {{ item.description }}
             </h3>
             <p class="text-#aaa">应用描述</p>
-            <n-button class="mt-24px whitespace-pre-wrap" type="primary">详细信息(TBD)</n-button>
+            <n-button class="mt-24px whitespace-pre-wrap" type="primary" @click="handleEditTable(item.id)">
+              查看
+            </n-button>
           </div>
+          <table-action-modal v-model:visible="visible" :type="modalType" :edit-data="editData" />
         </n-card>
       </n-grid-item>
     </template>
-
-    <!-- <n-grid-item span="0:24 640:24 1024:10">
-      <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <div ref="lineRef" class="w-full h-360px"></div>
-      </n-card>
-    </n-grid-item>
-    <n-grid-item span="0:24 640:24 1024:8">
-      <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <div ref="pieRef" class="w-full h-360px"></div>
-      </n-card>
-    </n-grid-item> -->
   </n-grid>
 </template>
 
@@ -40,154 +38,45 @@
 import { ref, onMounted } from 'vue';
 import type { Ref } from 'vue';
 import { useDashStore } from '@/store';
+import { useBoolean } from '@/hooks';
+import TableActionModal from './components/table-action-modal.vue';
+import type { ModalType } from './components/table-action-modal.vue';
 // import { type ECOption, useEcharts } from '@/composables';
-
+const { bool: visible, setTrue: openModal } = useBoolean();
 defineOptions({ name: 'DashboardAnalysisTopCard' });
 
-// const lineOptions = ref<ECOption>({
-//   tooltip: {
-//     trigger: 'axis',
-//     axisPointer: {
-//       type: 'cross',
-//       label: {
-//         backgroundColor: '#6a7985'
-//       }
-//     }
-//   },
-//   legend: {
-//     data: ['下载量', '注册数']
-//   },
-//   grid: {
-//     left: '3%',
-//     right: '4%',
-//     bottom: '3%',
-//     containLabel: true
-//   },
-//   xAxis: [
-//     {
-//       type: 'category',
-//       boundaryGap: false,
-//       data: ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00']
-//     }
-//   ],
-//   yAxis: [
-//     {
-//       type: 'value'
-//     }
-//   ],
-//   series: [
-//     {
-//       color: '#8e9dff',
-//       name: '下载量',
-//       type: 'line',
-//       smooth: true,
-//       stack: 'Total',
-//       areaStyle: {
-//         color: {
-//           type: 'linear',
-//           x: 0,
-//           y: 0,
-//           x2: 0,
-//           y2: 1,
-//           colorStops: [
-//             {
-//               offset: 0.25,
-//               color: '#8e9dff'
-//             },
-//             {
-//               offset: 1,
-//               color: '#fff'
-//             }
-//           ]
-//         }
-//       },
-//       emphasis: {
-//         focus: 'series'
-//       },
-//       data: [4623, 6145, 6268, 6411, 1890, 4251, 2978, 3880, 3606, 4311]
-//     },
-//     {
-//       color: '#26deca',
-//       name: '注册数',
-//       type: 'line',
-//       smooth: true,
-//       stack: 'Total',
-//       areaStyle: {
-//         color: {
-//           type: 'linear',
-//           x: 0,
-//           y: 0,
-//           x2: 0,
-//           y2: 1,
-//           colorStops: [
-//             {
-//               offset: 0.25,
-//               color: '#26deca'
-//             },
-//             {
-//               offset: 1,
-//               color: '#fff'
-//             }
-//           ]
-//         }
-//       },
-//       emphasis: {
-//         focus: 'series'
-//       },
-//       data: [2208, 2016, 2916, 4512, 8281, 2008, 1963, 2367, 2956, 678]
-//     }
-//   ]
-// }) as Ref<ECOption>;
-// const { domRef: lineRef } = useEcharts(lineOptions);
-
-// const pieOptions = ref<ECOption>({
-//   tooltip: {
-//     trigger: 'item'
-//   },
-//   legend: {
-//     bottom: '1%',
-//     left: 'center',
-//     itemStyle: {
-//       borderWidth: 0
-//     }
-//   },
-//   series: [
-//     {
-//       color: ['#5da8ff', '#8e9dff', '#fedc69', '#26deca'],
-//       name: '时间安排',
-//       type: 'pie',
-//       radius: ['45%', '75%'],
-//       avoidLabelOverlap: false,
-//       itemStyle: {
-//         borderRadius: 10,
-//         borderColor: '#fff',
-//         borderWidth: 1
-//       },
-//       label: {
-//         show: false,
-//         position: 'center'
-//       },
-//       emphasis: {
-//         label: {
-//           show: true,
-//           fontSize: '12'
-//         }
-//       },
-//       labelLine: {
-//         show: false
-//       },
-//       data: [
-//         { value: 20, name: '学习' },
-//         { value: 10, name: '娱乐' },
-//         { value: 30, name: '工作' },
-//         { value: 40, name: '休息' }
-//       ]
-//     }
-//   ]
-// }) as Ref<ECOption>;
-// const { domRef: pieRef } = useEcharts(pieOptions);
-
 const appsRef: Ref<any> = ref([]);
+const modalType = ref<ModalType>('add');
+
+function setModalType(type: ModalType) {
+  modalType.value = type;
+}
+
+function handleCreate() {
+  console.log('handle create app...');
+  openModal();
+  setModalType('add');
+}
+
+const editData = ref<UserManagement.User | null>(null);
+
+function setEditData(data: UserManagement.User | null) {
+  editData.value = data;
+}
+
+function handleEditTable(rowId: string) {
+  const findItem = appsRef.value.find((item: any) => item.id === rowId);
+  console.log('----', findItem);
+  if (findItem) {
+    setEditData({
+      appName: findItem.name,
+      appToken: findItem.token,
+      ...findItem
+    });
+  }
+  setModalType('edit');
+  openModal();
+}
 
 onMounted(async () => {
   // do something with the element
