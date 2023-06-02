@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { fetchAppList, fetchUserList, fetchOrderList } from '@/service';
+import { fetchAppList, fetchUserList, fetchOrderList, createApp } from '@/service';
 import { localStg } from '@/utils';
 
 interface DashState {
@@ -57,6 +57,16 @@ export const useDashStore = defineStore('dash-store', {
       const list = await fetchOrderList(token, query);
       console.log('order list: ', list);
       return list as any[];
+    },
+    async createApp(option: any) {
+      const { displayName, description } = option;
+      console.log('creating app with: ', displayName, description);
+      const token = localStg.get('token');
+      if (!token) {
+        throw new Error('Need login first');
+      }
+      const resp = await createApp(token, displayName, description);
+      return resp?.data;
     }
   }
 });

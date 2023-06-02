@@ -27,7 +27,12 @@
               查看
             </n-button>
           </div>
-          <table-action-modal v-model:visible="visible" :type="modalType" :edit-data="editData" />
+          <table-action-modal
+            v-model:visible="visible"
+            :type="modalType"
+            :edit-data="editData"
+            :on-done="onAppUpdated"
+          />
         </n-card>
       </n-grid-item>
     </template>
@@ -77,7 +82,14 @@ function handleEditTable(rowId: string) {
   setModalType('edit');
   openModal();
 }
-
+async function onAppUpdated() {
+  console.log('app need relaod');
+  const store = useDashStore();
+  const list = await store.getAppList();
+  console.log('dash app reload list: ', list);
+  appsRef.value = list;
+  // appsRef.value.push(...list);
+}
 onMounted(async () => {
   // do something with the element
   const store = useDashStore();

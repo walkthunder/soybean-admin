@@ -87,3 +87,26 @@ export const fetchAppList = async (token: string, isAdmin?: boolean) => {
   console.log('app info: ', resp);
   return resp.data;
 };
+
+export const createApp = async (token: string, displayName: string, description: string) => {
+  if (!token) {
+    throw new Error('customer token is missing');
+  }
+  if (!displayName || !description) {
+    throw new Error('App data is missing when creating app');
+  }
+  const resp = await request.post(
+    '/api/admin/apps/create',
+    {
+      displayName,
+      description
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  console.log('app info: ', resp);
+  return resp;
+};
