@@ -110,3 +110,26 @@ export const createApp = async (token: string, displayName: string, description:
   console.log('app info: ', resp);
   return resp;
 };
+
+export const createProducts = async (token: string, appId: string, products: any[]) => {
+  if (!token) {
+    throw new Error('customer token is missing');
+  }
+  if (!appId || !products) {
+    throw new Error('App data is missing when creating products');
+  }
+
+  if (!products || !Array.isArray(products)) {
+    throw new Error('invalid products data');
+  }
+  const resp = await request.post(`/api/admin/apps/${appId}/products/createMany`, products, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  console.log('products info: ', resp);
+  if (!resp?.data) {
+    throw new Error(resp?.error?.msg);
+  }
+  return resp;
+};
