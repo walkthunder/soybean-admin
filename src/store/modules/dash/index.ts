@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { fetchAppList, fetchUserList, fetchOrderList, createApp, createProducts } from '@/service';
+import { fetchAppList, fetchUserList, fetchOrderList, createApp, createProducts, fetchStats } from '@/service';
 import { localStg } from '@/utils';
 
 interface DashState {
@@ -19,6 +19,15 @@ export const useDashStore = defineStore('dash-store', {
     // }
   },
   actions: {
+    async getDashStatistics() {
+      const token = localStg.get('token');
+      if (!token) {
+        return [];
+      }
+      const resp = await fetchStats(token);
+      console.log('resp: ', resp);
+      return resp;
+    },
     async getAppList(query?: { isAdmin: boolean }) {
       const token = localStg.get('token');
       if (!token) {

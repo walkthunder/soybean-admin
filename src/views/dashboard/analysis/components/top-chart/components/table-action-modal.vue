@@ -23,6 +23,43 @@
           <n-input v-model:value="formModel.description" :readonly="!editable" placeholder="一句话介绍" />
         </n-form-item-grid-item>
       </n-grid>
+      <n-divider>产品列表</n-divider>
+      <n-grid-item v-if="formModel.products?.length === 0" span="0:24 640:24 1024:24" style="margin-bottom: 12px">
+        <n-empty description="You can't find anything">
+          <template #extra>
+            <n-button size="small">未创建产品列表</n-button>
+          </template>
+        </n-empty>
+      </n-grid-item>
+      <template v-for="product in formModel.products" v-else :key="product.id">
+        <n-grid :cols="24" :x-gap="18" style="padding: 12px; margin-top: 12px; box-shadow: 0 0 2px 0px #00000061">
+          <n-form-item-grid-item :span="12" label="产品名称" path="name">
+            <n-input v-model:value="product.name" :readonly="!editable" />
+          </n-form-item-grid-item>
+          <n-form-item-grid-item :span="12" label="产品类型" path="type">
+            <!-- <n-input v-model:value="product.productType" :readonly="!editable" /> -->
+            <n-select v-model:value="product.productType" :options="ProductTypeOptions" />
+          </n-form-item-grid-item>
+          <n-form-item-grid-item v-if="product.productType === 'AMOUNT'" :span="12" label="额度包" path="amount">
+            <n-input-number v-model:value="product.amount" :readonly="!editable">
+              <template #suffix>数量（条）</template>
+            </n-input-number>
+          </n-form-item-grid-item>
+          <n-form-item-grid-item v-if="product.productType === 'PLAN'" :span="12" label="会员等级" path="amount">
+            <n-input-number v-model:value="product.plan" :readonly="!editable" />
+          </n-form-item-grid-item>
+          <n-form-item-grid-item :span="12" label="价格" path="price">
+            <n-input-number v-model:value="product.price" :readonly="!editable">
+              <template #suffix>（元）</template>
+            </n-input-number>
+          </n-form-item-grid-item>
+          <n-form-item-grid-item :span="12" label="有效期" path="validityPeriod">
+            <n-input-number v-model:value="product.validityPeriod" :readonly="!editable">
+              <template #suffix>（天）</template>
+            </n-input-number>
+          </n-form-item-grid-item>
+        </n-grid>
+      </template>
       <n-space class="w-full pt-16px" :size="24" justify="end">
         <n-button class="w-72px" @click="closeModal">取消</n-button>
         <n-button class="w-72px" type="primary" @click="handleSubmit">确定</n-button>
@@ -53,6 +90,50 @@ export interface Props {
 }
 
 export type ModalType = NonNullable<Props['type']>;
+
+type TProductData = {
+  name: string;
+  price: number;
+  productType: string;
+  amount?: number | null;
+  plan?: number | null;
+  validityPeriod?: number | null;
+  extendedDescriptionData?: any;
+};
+
+const defaultProducts: TProductData[] = [
+  {
+    name: 'VIP版',
+    price: 6.0,
+    productType: 'AMOUNT',
+    plan: null,
+    amount: 1000,
+    validityPeriod: 90,
+    extendedDescriptionData: undefined
+  },
+  {
+    name: '免费版',
+    price: 0,
+    productType: 'AMOUNT',
+    plan: null,
+    amount: 0,
+    validityPeriod: null,
+    extendedDescriptionData: undefined
+  }
+];
+
+const ProductTypeOptions = [
+  {
+    label: '额度类型',
+    value: 'AMOUNT',
+    disabled: false
+  },
+  {
+    label: '会员类型',
+    value: 'PLAN',
+    disabled: true
+  }
+];
 
 defineOptions({ name: 'TableActionModal' });
 const store = useDashStore();
@@ -100,6 +181,7 @@ type FormModel = {
   appToken: string;
   displayName: string;
   description: string;
+  products?: TProductData[];
 };
 
 const formModel = reactive<FormModel>(createDefaultFormModel());
@@ -127,7 +209,8 @@ function createDefaultFormModel(): FormModel {
     appName: '',
     appToken: '',
     displayName: '',
-    description: ''
+    description: '',
+    products: []
   };
 }
 
@@ -139,6 +222,7 @@ function handleUpdateFormModelByModalType() {
   const handlers: Record<ModalType, () => void> = {
     add: () => {
       const defaultFormModel = createDefaultFormModel();
+      defaultFormModel.products = defaultProducts;
       handleUpdateFormModel(defaultFormModel);
     },
     edit: () => {
@@ -159,9 +243,38 @@ async function handleSubmit() {
     description: formModel.description
   });
   console.log('create resp: ', appResp);
-  window.$message?.success('新增成功!');
-  closeModal();
-  props.onDone();
+  // window.$message?.success('新增成功!');
+  // closeModal();
+  // props.onDone();
+  // Create products auto
+  const appId = (appResp as any).id;
+  if (!appId) {
+    window.$message?.error('创建应用失败');
+    return;
+  }
+
+  const productsResp = await autoCreateProducts(appId);
+  console.log('products resp: ', productsResp);
+}
+
+async function autoCreateProducts(appId: string) {
+  await formRef.value?.validate();
+  // api/admin/apps/create
+  const products = defaultProducts;
+
+  try {
+    const resp = await store.createProducts({
+      appId,
+      products
+    });
+    console.log('create products resp: ', resp);
+    window.$message?.success('新增成功!');
+    closeModal();
+    props.onDone();
+  } catch (error) {
+    window.$message?.error('创建产品失败，请检查数据类型');
+    closeModal();
+  }
 }
 
 watch(

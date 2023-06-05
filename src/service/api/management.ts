@@ -88,6 +88,19 @@ export const fetchAppList = async (token: string, isAdmin?: boolean) => {
   return resp.data;
 };
 
+export const fetchStats = async (token: string) => {
+  if (!token) {
+    throw new Error('unauthorized');
+  }
+  const resp = await request.get('/api/admin/apps/stats', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  console.log('stats info: ', resp);
+  return resp.data;
+};
+
 export const createApp = async (token: string, displayName: string, description: string) => {
   if (!token) {
     throw new Error('customer token is missing');

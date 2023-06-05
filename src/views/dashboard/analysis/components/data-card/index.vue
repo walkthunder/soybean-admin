@@ -6,10 +6,10 @@
         <div class="flex justify-between pt-12px">
           <svg-icon :icon="item.icon" class="text-32px" />
           <count-to
-            :prefix="item.unit"
+            :suffix="item.unit"
             :start-value="1"
             :end-value="item.value"
-            class="text-30px text-white dark:text-dark"
+            class="text-20px text-white dark:text-dark"
           />
         </div>
       </gradient-bg>
@@ -18,6 +18,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import type { Ref } from 'vue';
+import { useDashStore } from '@/store';
 import { GradientBg } from './components';
 
 defineOptions({ name: 'DashboardAnalysisDataCard' });
@@ -31,40 +34,53 @@ interface CardData {
   icon: string;
 }
 
-const cardData: CardData[] = [
-  {
-    id: 'visit',
-    title: '访问量',
-    value: 1000000,
-    unit: '',
-    colors: ['#ec4786', '#b955a4'],
-    icon: 'ant-design:bar-chart-outlined'
-  },
-  {
-    id: 'amount',
-    title: '成交额',
-    value: 234567.89,
-    unit: '$',
-    colors: ['#865ec0', '#5144b4'],
-    icon: 'ant-design:money-collect-outlined'
-  },
-  {
-    id: 'download',
-    title: '下载数',
-    value: 666666,
-    unit: '',
-    colors: ['#56cdf3', '#719de3'],
-    icon: 'carbon:document-download'
-  },
-  {
-    id: 'trade',
-    title: '成交数',
-    value: 999999,
-    unit: '',
-    colors: ['#fcbc25', '#f68057'],
-    icon: 'ant-design:trademark-circle-outlined'
-  }
-];
+const cardData: Ref<CardData[]> = ref([]);
+const cardDataGen = (data: any): CardData[] => {
+  console.log('data ', data);
+  const { order, customer } = data;
+  return [
+    {
+      id: 'customer-1d',
+      title: '新增用户（24h)',
+      value: customer.day,
+      unit: '人',
+      colors: ['#ec4786', '#b955a4'],
+      icon: 'ant-design:bar-chart-outlined'
+    },
+    {
+      id: 'customer-7d',
+      title: '新增用户（一周)',
+      value: customer.week,
+      unit: '人',
+      colors: ['#865ec0', '#5144b4'],
+      icon: 'ant-design:bar-chart-outlined'
+    },
+    {
+      id: 'order-1d',
+      title: '订单（24h)',
+      value: order.day,
+      unit: '笔',
+      colors: ['#56cdf3', '#719de3'],
+      icon: 'ant-design:money-collect-outlined'
+    },
+    {
+      id: 'order-7d',
+      title: '订单（一周)',
+      value: order.week,
+      unit: '笔',
+      colors: ['#fcbc25', '#f68057'],
+      icon: 'ant-design:money-collect-outlined'
+    }
+  ];
+};
+
+onMounted(async () => {
+  // do something with the element
+  const store = useDashStore();
+  const resp = await store.getDashStatistics();
+  console.log('dash stats resp: ', resp);
+  cardData.value = cardDataGen(resp);
+});
 </script>
 
 <style scoped></style>

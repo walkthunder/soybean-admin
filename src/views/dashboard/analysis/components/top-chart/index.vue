@@ -6,7 +6,14 @@
       </n-space>
       <n-divider>账户详情</n-divider>
     </n-grid-item>
-    <template v-for="item in appsRef" :key="item.id">
+    <n-grid-item v-if="appsRef.length === 0" span="0:24 640:24 1024:24" style="margin-bottom: 12px">
+      <n-empty description="You can't find anything">
+        <template #extra>
+          <n-button size="small">暂无应用</n-button>
+        </template>
+      </n-empty>
+    </n-grid-item>
+    <template v-for="item in appsRef" v-else :key="item.id">
       <n-grid-item span="0:24 640:24 1024:6">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
           <div class="w-full h-360px py-12px">
@@ -27,15 +34,12 @@
               查看
             </n-button>
           </div>
-          <table-action-modal
-            v-model:visible="visible"
-            :type="modalType"
-            :edit-data="editData"
-            :on-done="onAppUpdated"
-          />
         </n-card>
       </n-grid-item>
     </template>
+    <n-grid-item span="0:24 640:24 1024:24" style="margin-bottom: 12px">
+      <table-action-modal v-model:visible="visible" :type="modalType" :edit-data="editData" :on-done="onAppUpdated" />
+    </n-grid-item>
   </n-grid>
 </template>
 
@@ -71,7 +75,6 @@ function setEditData(data: UserManagement.User | null) {
 
 function handleEditTable(rowId: string) {
   const findItem = appsRef.value.find((item: any) => item.id === rowId);
-  console.log('----', findItem);
   if (findItem) {
     setEditData({
       appName: findItem.name,
@@ -82,20 +85,20 @@ function handleEditTable(rowId: string) {
   setModalType('edit');
   openModal();
 }
+
 async function onAppUpdated() {
   console.log('app need relaod');
   const store = useDashStore();
   const list = await store.getAppList();
   console.log('dash app reload list: ', list);
   appsRef.value = list;
-  // appsRef.value.push(...list);
 }
 onMounted(async () => {
   // do something with the element
   const store = useDashStore();
   const list = await store.getAppList();
   console.log('dash app list: ', list);
-  appsRef.value.push(...list);
+  appsRef.value = list;
 });
 </script>
 
