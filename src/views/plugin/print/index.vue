@@ -16,8 +16,8 @@ import printJS from 'print-js';
 function printTable() {
   printJS({
     printable: [
-      { name: 'soybean', wechat: 'honghuangdc', remark: '欢迎来技术交流' },
-      { name: 'soybean', wechat: 'honghuangdc', remark: '欢迎来技术交流' }
+      { name: 'Webinfra', wechat: 'honghuangdc', remark: '欢迎来技术交流' },
+      { name: 'Webinfra', wechat: 'honghuangdc', remark: '欢迎来技术交流' }
     ],
     properties: ['name', 'wechat', 'remark'],
     type: 'json'

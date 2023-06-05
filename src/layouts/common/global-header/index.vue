@@ -7,12 +7,12 @@
     </div>
     <header-menu v-else />
     <div class="flex justify-end h-full">
-      <global-search />
-      <github-site />
+      <!-- <global-search /> -->
+      <!-- <github-site /> -->
       <full-screen />
       <theme-mode />
       <toggle-lang />
-      <system-message />
+      <!-- <system-message /> -->
       <setting-button v-if="showButton" />
       <user-avatar />
     </div>
@@ -23,15 +23,15 @@
 import { useThemeStore } from '@/store';
 import { useBasicLayout } from '@/composables';
 import GlobalLogo from '../global-logo/index.vue';
-import GlobalSearch from '../global-search/index.vue';
+// import GlobalSearch from '../global-search/index.vue';
 import {
   FullScreen,
-  GithubSite,
+  // GithubSite,
   GlobalBreadcrumb,
   HeaderMenu,
   MenuCollapse,
   SettingButton,
-  SystemMessage,
+  // SystemMessage,
   ThemeMode,
   UserAvatar,
   ToggleLang

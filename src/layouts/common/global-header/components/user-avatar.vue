@@ -19,11 +19,11 @@ const theme = useThemeStore();
 const { iconRender } = useIconRender();
 
 const options: DropdownOption[] = [
-  {
-    label: '用户中心',
-    key: 'user-center',
-    icon: iconRender({ icon: 'carbon:user-avatar' })
-  },
+  // {
+  //   label: '用户中心',
+  //   key: 'user-center',
+  //   icon: iconRender({ icon: 'carbon:user-avatar' })
+  // },
   {
     type: 'divider',
     key: 'divider'
