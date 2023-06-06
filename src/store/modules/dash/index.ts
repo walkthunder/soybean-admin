@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia';
-import { fetchAppList, fetchUserList, fetchOrderList, createApp, createProducts, fetchStats } from '@/service';
+import {
+  fetchAppList,
+  fetchUserList,
+  fetchOrderList,
+  createApp,
+  createProducts,
+  fetchStats,
+  getProducts
+} from '@/service';
 import { localStg } from '@/utils';
 
 interface DashState {
@@ -78,6 +86,16 @@ export const useDashStore = defineStore('dash-store', {
       return resp?.data;
     },
 
+    async getProducts(appId: string) {
+      console.log('get products with: ', appId);
+      const resp = await getProducts(appId);
+      const products = resp.data as any[];
+      // data adaptor
+      return products.map((item: any) => {
+        item.price = Number(item.price);
+        return item;
+      });
+    },
     // {{admin_api_url}}/api/admin/apps/:appId/products/createMany
     async createProducts(option: any) {
       const { appId, products } = option;

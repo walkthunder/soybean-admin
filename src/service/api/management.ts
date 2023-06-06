@@ -146,3 +146,16 @@ export const createProducts = async (token: string, appId: string, products: any
   }
   return resp;
 };
+
+export const getProducts = async (appId: string) => {
+  if (!appId) {
+    throw new Error('App data is missing when query products');
+  }
+
+  const resp = await request.get(`/api/admin/apps/${appId}/products`);
+  console.log('query products info: ', resp);
+  if (!resp?.data) {
+    throw new Error(resp?.error?.msg);
+  }
+  return resp;
+};

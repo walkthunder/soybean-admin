@@ -54,6 +54,9 @@ export default defineConfig(configEnv => {
       commonjsOptions: {
         ignoreTryCatch: false
       }
+    },
+    esbuild: {
+      drop: ['console', 'debugger']
     }
   };
 });

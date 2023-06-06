@@ -227,7 +227,13 @@ function handleUpdateFormModelByModalType() {
     },
     edit: () => {
       if (props.editData) {
-        handleUpdateFormModel(props.editData);
+        const appId = props.editData.id;
+        store.getProducts(appId).then(products => {
+          handleUpdateFormModel({
+            ...props.editData,
+            products
+          });
+        });
       }
     }
   };
