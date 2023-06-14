@@ -57,6 +57,7 @@ export default defineConfig(configEnv => {
     },
     esbuild: {
       drop: ['console', 'debugger']
-    }
+    },
+    rewrites: [{ source: '/(.*)', destination: '/' }]
   };
 });
