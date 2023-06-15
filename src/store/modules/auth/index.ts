@@ -123,6 +123,12 @@ export const useAuthStore = defineStore('auth-store', {
       if (data) {
         console.log('data - ', data);
         await this.handleActionAfterLogin(data);
+      } else {
+        window.$notification?.error({
+          title: '登录失败!',
+          content: `请重新登录`,
+          duration: 3000
+        });
       }
       this.loginLoading = false;
     },

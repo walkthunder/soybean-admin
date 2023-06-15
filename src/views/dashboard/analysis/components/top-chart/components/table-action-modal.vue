@@ -58,6 +58,9 @@
               <template #suffix>（天）</template>
             </n-input-number>
           </n-form-item-grid-item>
+          <n-form-item-grid-item :span="12" label="限购" path="restricted">
+            <n-switch v-model:value="product.restricted" disabled />
+          </n-form-item-grid-item>
         </n-grid>
       </template>
       <n-space class="w-full pt-16px" :size="24" justify="end">
@@ -97,6 +100,7 @@ type TProductData = {
   productType: string;
   amount?: number | null;
   plan?: number | null;
+  restricted?: number;
   validityPeriod?: number | null;
   extendedDescriptionData?: any;
 };
@@ -109,6 +113,7 @@ const defaultProducts: TProductData[] = [
     plan: null,
     amount: 1000,
     validityPeriod: 90,
+    restricted: 0,
     extendedDescriptionData: undefined
   },
   {
@@ -118,6 +123,7 @@ const defaultProducts: TProductData[] = [
     plan: null,
     amount: 0,
     validityPeriod: null,
+    restricted: 1,
     extendedDescriptionData: undefined
   }
 ];
