@@ -59,7 +59,7 @@
             </n-input-number>
           </n-form-item-grid-item>
           <n-form-item-grid-item :span="12" label="限购" path="restricted">
-            <n-switch v-model:value="product.restricted" disabled />
+            <n-tag>{{ Number(product.restricted) > 0 ? `${product.restricted} 次` : `无` }}</n-tag>
           </n-form-item-grid-item>
         </n-grid>
       </template>
