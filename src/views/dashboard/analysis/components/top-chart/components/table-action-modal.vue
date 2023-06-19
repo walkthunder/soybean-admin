@@ -121,8 +121,8 @@ const defaultProducts: TProductData[] = [
     price: 0,
     productType: 'AMOUNT',
     plan: null,
-    amount: 0,
-    validityPeriod: null,
+    amount: 20,
+    validityPeriod: 30,
     restricted: 1,
     extendedDescriptionData: undefined
   }
