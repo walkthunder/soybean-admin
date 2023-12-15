@@ -96,7 +96,7 @@ export const useDashStore = defineStore('dash-store', {
         return item;
       });
     },
-    // {{admin_api_url}}/api/admin/apps/:appId/products/createMany
+    // {{admin_api_url}}/v1-flowda-admin-api/apps/:appId/products/createMany
     async createProducts(option: any) {
       const { appId, products } = option;
       console.log('creating products with: ', appId, products);

@@ -31,7 +31,9 @@ export const fetchUserList = async (token: string, query?: any) => {
     q.set('email', query?.email);
   }
   const resp = await request.get(
-    isAdmin ? `/api/admin/apps/super/customers?${q.toString()}` : `/api/admin/apps/customers?${q.toString()}`,
+    isAdmin
+      ? `/v1-flowda-admin-api/apps/super/customers?${q.toString()}`
+      : `/v1-flowda-admin-api/apps/customers?${q.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -68,7 +70,9 @@ export const fetchOrderList = async (token: string, query?: any) => {
     q.set('customerId', query?.customerId);
   }
   const resp = await request.get(
-    isAdmin ? `/api/admin/apps/super/orders?${q.toString()}` : `/api/admin/apps/orders?${q.toString()}`,
+    isAdmin
+      ? `/v1-flowda-admin-api/apps/super/orders?${q.toString()}`
+      : `/v1-flowda-admin-api/apps/orders?${q.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -79,7 +83,7 @@ export const fetchOrderList = async (token: string, query?: any) => {
   return resp.data;
 };
 export const fetchAppList = async (token: string, isAdmin?: boolean) => {
-  const resp = await request.get(isAdmin ? '/api/admin/apps/super/apps' : '/api/admin/apps', {
+  const resp = await request.get(isAdmin ? '/v1-flowda-admin-api/apps/super/apps' : '/v1-flowda-admin-api/apps', {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -92,7 +96,7 @@ export const fetchStats = async (token: string) => {
   if (!token) {
     throw new Error('unauthorized');
   }
-  const resp = await request.get('/api/admin/apps/stats', {
+  const resp = await request.get('/v1-flowda-admin-api/apps/stats', {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -109,7 +113,7 @@ export const createApp = async (token: string, displayName: string, description:
     throw new Error('App data is missing when creating app');
   }
   const resp = await request.post(
-    '/api/admin/apps/create',
+    '/v1-flowda-admin-api/apps/create',
     {
       displayName,
       description
@@ -135,7 +139,7 @@ export const createProducts = async (token: string, appId: string, products: any
   if (!products || !Array.isArray(products)) {
     throw new Error('invalid products data');
   }
-  const resp = await request.post(`/api/admin/apps/${appId}/products/createMany`, products, {
+  const resp = await request.post(`/v1-flowda-admin-api/apps/${appId}/products/createMany`, products, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -152,7 +156,7 @@ export const getProducts = async (appId: string) => {
     throw new Error('App data is missing when query products');
   }
 
-  const resp = await request.get(`/api/admin/apps/${appId}/products`);
+  const resp = await request.get(`/v1-flowda-admin-api/apps/${appId}/products`);
   console.log('query products info: ', resp);
   if (!resp?.data) {
     throw new Error(resp?.error?.msg);

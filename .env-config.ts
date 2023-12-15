@@ -10,7 +10,7 @@ const serviceEnv: ServiceEnv = {
     url: 'http://localhost:8080'
   },
   prod: {
-    url: 'https://admin-api.my.webinfra.cloud'
+    url: 'https://api.webinfra.cloud'
   }
 };
 

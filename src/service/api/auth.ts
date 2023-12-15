@@ -17,7 +17,7 @@ export function fetchSmsCode(phone: string) {
  */
 export function fetchEmailCode(email: string) {
   return request
-    .post('/api/admin/auth/preSignup', {
+    .post('/v1-flowda-admin-api/auth/preSignup', {
       email
     })
     .then(resp => {
@@ -33,7 +33,7 @@ export function fetchEmailCode(email: string) {
  * @param password - 密码
  */
 export function fetchLogin(userName: string, password: string) {
-  return request.post('/api/admin/auth/logInApi', { username: userName, password }).then(resp => {
+  return request.post('/v1-flowda-admin-api/auth/logInApi', { username: userName, password }).then(resp => {
     const { data } = resp;
     if (!(data as any)?.at) return null;
     return {
@@ -52,7 +52,7 @@ export function fetchLogin(userName: string, password: string) {
  */
 // eslint-disable-next-line max-params
 export function fetchSingup(code: string, email: string, password: string, name?: string) {
-  return request.post('/api/admin/auth/signup', { verifyCode: code, name, email, password }).then(resp => {
+  return request.post('/v1-flowda-admin-api/auth/signup', { verifyCode: code, name, email, password }).then(resp => {
     const { data } = resp;
     if (!(data as any)?.id) return null;
     return resp;
@@ -61,7 +61,7 @@ export function fetchSingup(code: string, email: string, password: string, name?
 
 /** 获取用户信息 */
 export async function fetchUserInfo(at?: string) {
-  const resp = await request.get('/api/admin/auth/info', {
+  const resp = await request.get('/v1-flowda-admin-api/auth/info', {
     headers: {
       Authorization: `Bearer ${at}`
     }
@@ -87,7 +87,7 @@ export function fetchUserRoutes(userId: string) {
  */
 export async function fetchUpdateToken(refreshToken: string) {
   // return mockRequest.post<ApiAuth.Token>('/updateToken', { refreshToken });
-  const resp = await request.get('/api/admin/auth/refreshToken', {
+  const resp = await request.get('/v1-flowda-admin-api/auth/refreshToken', {
     headers: {
       Refresh: `Bearer ${refreshToken}`
     }
