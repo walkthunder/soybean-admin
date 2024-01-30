@@ -137,7 +137,7 @@ const ProductTypeOptions = [
   {
     label: '会员类型',
     value: 'PLAN',
-    disabled: true
+    disabled: false
   }
 ];
 
